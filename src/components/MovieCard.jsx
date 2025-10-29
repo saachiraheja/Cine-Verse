@@ -4,13 +4,13 @@ import { useMovieContext } from "../contexts/MovieContext";
 
 function MovieCard({ movie }) {
   const { isFavorite, addToFavorites, removeFromFavorites } = useMovieContext();
-
-  // Local favorite state mirrors the context
   const [favorite, setFavorite] = useState(isFavorite(movie.id));
+  const [tooltip, setTooltip] = useState("Add to Favorites");
 
-  // Sync whenever context favorites change
   useEffect(() => {
-    setFavorite(isFavorite(movie.id));
+    const fav = isFavorite(movie.id);
+    setFavorite(fav);
+    setTooltip(fav ? "Remove from Favorites" : "Add to Favorites");
   }, [isFavorite, movie.id]);
 
   function onFavoriteClick(e) {
@@ -18,9 +18,11 @@ function MovieCard({ movie }) {
     if (favorite) {
       removeFromFavorites(movie.id);
       setFavorite(false);
+      setTooltip("Add to Favorites");
     } else {
       addToFavorites(movie);
       setFavorite(true);
+      setTooltip("Remove from Favorites");
     }
   }
 
@@ -35,6 +37,7 @@ function MovieCard({ movie }) {
           <button
             className={`favorite-btn ${favorite ? "active" : ""}`}
             onClick={onFavoriteClick}
+            title={tooltip} // 🧠 tooltip shown on hover
           >
             ♥
           </button>
